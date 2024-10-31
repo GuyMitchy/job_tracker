@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Goals & Targets</h1>
+        <a href="{% url 'targets:goal-create' %}" class="btn btn-primary">Set New Goal</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if goals %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Goal</th>
+                                <th>Type</th>
+                                <th>Period</th>
+                                <th>Progress</th>
+                                <th>Timeline</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for goal in goals %}
+                            <tr>
+                                <td>{{ goal.title }}</td>
+                                <td>{{ goal.get_goal_type_display }}</td>
+                                <td>{{ goal.get_period_display }}</td>
+                                <td>
+                                    {% with latest_progress=goal.progress.last %}
+                                        {% if latest_progress %}
+                                            {{ latest_progress.actual_number }}/{{ goal.target_number }}
+                                        {% else %}
+                                            0/{{ goal.target_number }}
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td>{{ goal.start_date|date:"M d" }} - {{ goal.end_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'targets:goal-detail' goal.pk %}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{% url 'targets:goal-edit' goal.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No goals set yet. <a href="{% url 'targets:goal-create' %}">Set your first goal</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

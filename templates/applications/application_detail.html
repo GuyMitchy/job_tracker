@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ application.position }}</h1>
+        <div>
+            <a href="{% url 'applications:edit' application.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'applications:delete' application.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'applications:list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Job Details</h5>
+                    <dl class="row">
+                        <dt class="col-sm-3">Company</dt>
+                        <dd class="col-sm-9">{{ application.company.name }}</dd>
+
+                        <dt class="col-sm-3">Status</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-{{ application.status|lower }}">
+                                {{ application.get_status_display }}
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-3">Application Date</dt>
+                        <dd class="col-sm-9">{{ application.application_date }}</dd>
+
+                        <dt class="col-sm-3">Salary Range</dt>
+                        <dd class="col-sm-9">{{ application.salary_range|default:"Not specified" }}</dd>
+
+                        {% if application.application_url %}
+                        <dt class="col-sm-3">Application URL</dt>
+                        <dd class="col-sm-9">
+                            <a href="{{ application.application_url }}" target="_blank">View Application</a>
+                        </dd>
+                        {% endif %}
+                    </dl>
+
+                    <h5 class="mt-4">Job Description</h5>
+                    <p class="card-text">{{ application.job_description|linebreaks|default:"No description provided." }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Company Information</h5>
+                    <dl>
+                        <dt>Industry</dt>
+                        <dd>{{ application.company.industry|default:"Not specified" }}</dd>
+
+                        {% if application.company.website %}
+                        <dt>Website</dt>
+                        <dd><a href="{{ application.company.website }}" target="_blank">Visit Website</a></dd>
+                        {% endif %}
+                    </dl>
+                    {% if application.company.notes %}
+                    <h6>Company Notes</h6>
+                    <p class="card-text">{{ application.company.notes|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

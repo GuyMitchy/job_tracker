@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Networking Contacts</h1>
+        <a href="{% url 'networking:contact-create' %}" class="btn btn-primary">Add New Contact</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if contacts %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Position</th>
+                                <th>Last Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contact in contacts %}
+                            <tr>
+                                <td>{{ contact.name }}</td>
+                                <td>{{ contact.company }}</td>
+                                <td>{{ contact.position }}</td>
+                                <td>
+                                    {% with last_event=contact.networkingevent_set.first %}
+                                        {% if last_event %}
+                                            {{ last_event.event.start_time|date:"M d, Y" }}
+                                        {% else %}
+                                            No events yet
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'networking:contact-detail' contact.pk %}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{% url 'networking:contact-edit' contact.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No contacts added yet. <a href="{% url 'networking:contact-create' %}">Add your first contact</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,177 @@
+AI Agent Prompt: Job Search Tracker with Calendar Integration
+You are an expert Django developer tasked with building a mobile-first job search tracking application. The application will integrate with a calendar system to track all job search activities.
+Core Requirements
+
+Development Stack
+
+pythonCopyRequired packages:
+- Django==5.0
+- django-rest-framework==3.14.0
+- django-calendar==1.0
+- celery==5.3.6
+- redis==5.0.1
+- psycopg2-binary==2.9.9
+- python-dateutil==2.8.2
+
+Project Structure
+Follow this Django project structure:
+
+Copyjobsearch_tracker/
+├── apps/
+│   ├── core/              # Shared functionality
+│   ├── users/            # User management
+│   ├── calendar/         # Calendar integration
+│   ├── applications/     # Job applications
+│   ├── networking/       # Network tracking
+│   ├── targets/         # Goal tracking
+│   └── analytics/       # Metrics and reporting
+├── config/              # Settings
+├── static/             # Static files
+└── templates/          # HTML templates
+
+Database Models
+Implement these core models:
+
+pythonCopy# apps/calendar/models.py
+class CalendarEvent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    event_type = models.CharField(max_length=50)  # application, interview, networking
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    description = models.TextField()
+    location = models.CharField(max_length=200, blank=True)
+    is_all_day = models.BooleanField(default=False)
+
+# apps/applications/models.py
+class JobApplication(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    company = models.CharField(max_length=100)
+    position = models.CharField(max_length=100)
+    application_date = models.DateField()
+    status = models.CharField(max_length=50)
+    calendar_event = models.OneToOneField(CalendarEvent, on_delete=models.SET_NULL, null=True)
+
+# apps/networking/models.py
+class NetworkingContact(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    company = models.CharField(max_length=100)
+    position = models.CharField(max_length=100)
+    linkedin_url = models.URLField(blank=True)
+    notes = models.TextField(blank=True)
+
+class NetworkingEvent(models.Model):
+    contact = models.ForeignKey(NetworkingContact, on_delete=models.CASCADE)
+    calendar_event = models.OneToOneField(CalendarEvent, on_delete=models.CASCADE)
+    event_type = models.CharField(max_length=50)  # coffee, interview, call
+    notes = models.TextField(blank=True)
+
+Views and Templates
+Implement using class-based views:
+
+pythonCopy# apps/calendar/views.py
+class CalendarView(LoginRequiredMixin, TemplateView):
+    template_name = 'calendar/calendar.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['events'] = CalendarEvent.objects.filter(user=self.request.user)
+        return context
+
+# apps/applications/views.py
+class JobApplicationCreateView(LoginRequiredMixin, CreateView):
+    model = JobApplication
+    form_class = JobApplicationForm
+    template_name = 'applications/create.html'
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        response = super().form_valid(form)
+        # Create calendar event
+        CalendarEvent.objects.create(
+            user=self.request.user,
+            title=f"Application: {form.instance.position} at {form.instance.company}",
+            event_type='application',
+            start_time=form.instance.application_date,
+            is_all_day=True
+        )
+        return response
+
+Calendar Integration Requirements
+
+
+Implement full calendar view with monthly/weekly/daily views
+Color-code different event types
+Enable drag-and-drop event scheduling
+Provide event filtering by type
+Enable recurring events for regular networking activities
+Implement mobile-responsive calendar interface
+
+
+Features to Implement
+
+
+Job application tracking with status updates
+Networking contact management
+Interview scheduling
+Monthly/weekly goal setting
+LinkedIn post tracking
+Recruiter relationship management
+Industry conversation question bank
+Analytics dashboard
+
+
+API Endpoints (DRF)
+
+pythonCopy# apps/calendar/api.py
+class CalendarEventViewSet(viewsets.ModelViewSet):
+    serializer_class = CalendarEventSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return CalendarEvent.objects.filter(user=self.request.user)
+
+Error Handling
+Implement comprehensive error handling:
+
+pythonCopy# apps/core/exceptions.py
+class CalendarSyncError(Exception):
+    pass
+
+# apps/calendar/views.py
+def sync_calendar(request):
+    try:
+        # Calendar sync logic
+        pass
+    except CalendarSyncError as e:
+        messages.error(request, f"Calendar sync failed: {str(e)}")
+        return redirect('calendar:index')
+
+Testing Requirements
+
+
+Write unit tests for all models
+Integration tests for calendar functionality
+API endpoint testing
+Mobile responsiveness testing
+
+
+Security Considerations
+
+
+Implement proper user authentication
+Ensure calendar events are user-scoped
+Use CSRF protection
+Implement rate limiting on API endpoints
+Secure sensitive information
+
+Development Guidelines:
+
+Follow PEP 8 style guide
+Use Django's built-in authentication
+Implement proper form validation
+Use Django signals for calendar event creation
+Optimize database queries
+Implement caching for calendar views
+Use asynchronous tasks for email notifications

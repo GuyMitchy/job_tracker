@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Companies</h1>
+        <a href="{% url 'applications:company-create' %}" class="btn btn-primary">Add New Company</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if companies %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Industry</th>
+                                <th>Website</th>
+                                <th>Applications</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for company in companies %}
+                            <tr>
+                                <td>{{ company.name }}</td>
+                                <td>{{ company.industry|default:"Not specified" }}</td>
+                                <td>
+                                    {% if company.website %}
+                                        <a href="{{ company.website }}" target="_blank">Visit Website</a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ company.jobapplication_set.count }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No companies added yet. <a href="{% url 'applications:company-create' %}">Add your first company</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

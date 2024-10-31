@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Job Applications</h1>
+        <a href="{% url 'applications:create' %}" class="btn btn-primary">Add New Application</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Position</th>
+                                <th>Company</th>
+                                <th>Status</th>
+                                <th>Application Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                            <tr>
+                                <td>{{ application.position }}</td>
+                                <td>{{ application.company.name }}</td>
+                                <td><span class="badge bg-{{ application.status|lower }}">{{ application.get_status_display }}</span></td>
+                                <td>{{ application.application_date }}</td>
+                                <td>
+                                    <a href="{% url 'applications:detail' application.pk %}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{% url 'applications:edit' application.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No job applications yet. <a href="{% url 'applications:create' %}">Create your first application</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

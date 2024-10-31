@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load analytics_extras %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Analytics Dashboard</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Overview</h5>
+                </div>
+                <div class="card-body">
+                    <dl>
+                        <dt>Total Applications</dt>
+                        <dd>{{ total_applications }}</dd>
+
+                        <dt>Active Applications</dt>
+                        <dd>{{ active_applications }}</dd>
+
+                        <dt>Success Rate</dt>
+                        <dd>{{ success_rate|floatformat:1 }}%</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Application Status Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for status in status_breakdown %}
+                                <tr>
+                                    <td>{{ status.get_status_display }}</td>
+                                    <td>{{ status.count }}</td>
+                                    <td>{{ status.count|percentage:total_applications }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Monthly Metrics</h5>
+                        <a href="{% url 'analytics:metrics-create' %}" class="btn btn-primary btn-sm">Add Metrics</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if monthly_metrics %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Applications</th>
+                                        <th>Interviews</th>
+                                        <th>Networking</th>
+                                        <th>Offers</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for metric in monthly_metrics %}
+                                    <tr>
+                                        <td>{{ metric.date|date:"M j, Y" }}</td>
+                                        <td>{{ metric.applications_submitted }}</td>
+                                        <td>{{ metric.interviews_attended }}</td>
+                                        <td>{{ metric.networking_events }}</td>
+                                        <td>{{ metric.offers_received }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="mb-0">No metrics recorded yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_activity %}
+                        <div class="list-group">
+                        {% for activity in recent_activity %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ activity.get_action_type_display }}</h6>
+                                    <small>{{ activity.created_at|date:"M j, Y g:i A" }}</small>
+                                </div>
+                                <p class="mb-1">{{ activity.description }}</p>
+                                {% if activity.job_application %}
+                                    <small>
+                                        <a href="{% url 'applications:detail' activity.job_application.pk %}">
+                                            View Application
+                                        </a>
+                                    </small>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="mb-0">No recent activity.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Add charts here if needed
+</script>
+{% endblock %} 

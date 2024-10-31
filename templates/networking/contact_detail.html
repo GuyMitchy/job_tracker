@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ contact.name }}</h1>
+        <div>
+            <a href="{% url 'networking:event-create' %}?contact={{ contact.pk }}" class="btn btn-primary">Schedule Meeting</a>
+            <a href="{% url 'networking:contact-edit' contact.pk %}" class="btn btn-warning">Edit Contact</a>
+            <a href="{% url 'networking:contact-list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Contact Information</h5>
+                    <dl>
+                        <dt>Company</dt>
+                        <dd>{{ contact.company }}</dd>
+
+                        <dt>Position</dt>
+                        <dd>{{ contact.position }}</dd>
+
+                        {% if contact.email %}
+                        <dt>Email</dt>
+                        <dd><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></dd>
+                        {% endif %}
+
+                        {% if contact.phone %}
+                        <dt>Phone</dt>
+                        <dd><a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></dd>
+                        {% endif %}
+
+                        {% if contact.linkedin_url %}
+                        <dt>LinkedIn</dt>
+                        <dd><a href="{{ contact.linkedin_url }}" target="_blank">View Profile</a></dd>
+                        {% endif %}
+                    </dl>
+
+                    {% if contact.notes %}
+                    <h6>Notes</h6>
+                    <p class="card-text">{{ contact.notes|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Interaction History</h5>
+                </div>
+                <div class="card-body">
+                    {% if events %}
+                        <div class="list-group">
+                        {% for event in events %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ event.get_event_type_display }}</h6>
+                                    <small>{{ event.event.start_time|date:"F j, Y" }}</small>
+                                </div>
+                                {% if event.notes %}
+                                <p class="mb-1">{{ event.notes|linebreaks }}</p>
+                                {% endif %}
+                                {% if event.follow_up_date %}
+                                <small class="text-muted">Follow-up scheduled: {{ event.follow_up_date }}</small>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="mb-0">No interactions recorded yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
