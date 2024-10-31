@@ -29,17 +29,27 @@ class NetworkingEventForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
         
-        # Create the associated Event
-        event = Event.objects.create(
-            user=self.user,
-            title=f"{instance.get_event_type_display()} with {instance.contact.name}",
-            event_type='networking',
-            start_time=self.cleaned_data['start_time'],
-            end_time=self.cleaned_data['end_time'],
-            description=instance.notes
-        )
+        # If this is an update (instance has an existing event)
+        if instance.pk and instance.event:
+            # Update the existing event
+            event = instance.event
+            event.title = f"{instance.get_event_type_display()} with {instance.contact.name}"
+            event.start_time = self.cleaned_data['start_time']
+            event.end_time = self.cleaned_data['end_time']
+            event.description = instance.notes
+            event.save()
+        else:
+            # Create a new event
+            event = Event.objects.create(
+                user=self.user,
+                title=f"{instance.get_event_type_display()} with {instance.contact.name}",
+                event_type='networking',
+                start_time=self.cleaned_data['start_time'],
+                end_time=self.cleaned_data['end_time'],
+                description=instance.notes
+            )
+            instance.event = event
         
-        instance.event = event
         if commit:
             instance.save()
         return instance
