@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         events: eventsData,
         
-        // Add event click handler
+        // Update the event click handler in home.html
         eventClick: function(info) {
             const eventType = info.event.extendedProps.type;
             const eventId = info.event.id;
@@ -223,17 +223,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // Route to appropriate detail view based on event type
             switch(eventType) {
                 case 'networking':
-                    window.location.href = `/networking/events/${eventId}/`;
+                    window.location.href = `/networking/event/${eventId}/`;  // Changed from events to event
                     break;
                 case 'application':
+                    window.location.href = `/applications/${eventId}/`;
+                    break;
                 case 'interview':
                     window.location.href = `/applications/${eventId}/`;
                     break;
                 case 'followup':
-                    window.location.href = `/networking/events/${eventId}/`;
+                    window.location.href = `/networking/event/${eventId}/`;  // Changed from events to event
                     break;
                 default:
-                    window.location.href = `/events/${eventId}/`;
+                    console.log('Unknown event type:', eventType);
             }
         },
         
@@ -251,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <a href="/applications/create/?date=${date}" class="btn btn-sm btn-primary">
                                 New Application
                             </a>
-                            <a href="/networking/events/create/?date=${date}" class="btn btn-sm btn-success">
+                            <a href="/networking/event/create/?date=${date}" class="btn btn-sm btn-success">
                                 Schedule Meeting
                             </a>
                             <a href="/targets/goal-create/?date=${date}" class="btn btn-sm btn-warning">

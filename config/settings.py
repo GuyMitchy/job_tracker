@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'apps.networking.apps.NetworkingConfig',
     'apps.targets.apps.TargetsConfig',
     'apps.analytics.apps.AnalyticsConfig',
+    'apps.linkedin.apps.LinkedInConfig',
 ]
 
 MIDDLEWARE = [

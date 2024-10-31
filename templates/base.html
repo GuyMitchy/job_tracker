@@ -217,6 +217,22 @@
                                 <li><a class="dropdown-item" href="{% url 'analytics:activity-log' %}">Activity Log</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="linkedinDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class='bx bxl-linkedin-square me-1'></i>
+                                LinkedIn
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'linkedin:post-list' %}">Posts</a></li>
+                                <li><a class="dropdown-item" href="{% url 'linkedin:post-create' %}">Add Post</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'linkedin:interaction-list' %}">Interactions</a></li>
+                                <li><a class="dropdown-item" href="{% url 'linkedin:interaction-create' %}">Add Interaction</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'linkedin:plan-list' %}">Engagement Plans</a></li>
+                                <li><a class="dropdown-item" href="{% url 'linkedin:plan-create' %}">Create Plan</a></li>
+                            </ul>
+                        </li>
                     {% endif %}
                 </ul>
                 {% if user.is_authenticated %}

@@ -24,11 +24,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
             user=self.request.user,
             start_time__gte=now - timedelta(days=30),
             start_time__lte=now + timedelta(days=60)
-        ).select_related('user')
+        ).select_related('networkingevent')
 
         calendar_events = []
         for event in events:
-            calendar_events.append({
+            event_data = {
                 'id': event.id,
                 'title': event.title,
                 'start': event.start_time.isoformat(),
@@ -37,9 +37,15 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 'allDay': event.is_all_day,
                 'extendedProps': {
                     'type': event.event_type,
-                    'description': event.description
+                    'description': event.description,
                 }
-            })
+            }
+            
+            # Add NetworkingEvent ID if this is a networking event
+            if event.event_type == 'networking' and hasattr(event, 'networkingevent'):
+                event_data['extendedProps']['networkingEventId'] = event.networkingevent.id
+
+            calendar_events.append(event_data)
 
         context['calendar_events_json'] = json.dumps(calendar_events, cls=DjangoJSONEncoder)
         
@@ -59,6 +65,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['upcoming_events'] = Event.objects.filter(
             user=self.request.user,
             start_time__gte=now
+        ).select_related(
+            'networkingevent',
+            'networkingevent__contact'
         ).order_by('start_time')[:5]
         
         # Statistics
@@ -80,9 +89,10 @@ class HomeView(LoginRequiredMixin, TemplateView):
             application_date__year=now.year
         ).count()
         
-        context['networking_events_count'] = NetworkingEvent.objects.filter(
-            contact__user=self.request.user,
-            event__start_time__gte=now
+        context['networking_events_count'] = Event.objects.filter(
+            user=self.request.user,
+            event_type='networking',
+            start_time__gte=now
         ).count()
         
         return context

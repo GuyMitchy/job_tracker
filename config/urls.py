@@ -12,4 +12,5 @@ urlpatterns = [
     path('networking/', include('apps.networking.urls')),
     path('targets/', include('apps.targets.urls')),
     path('analytics/', include('apps.analytics.urls')),
+    path('linkedin/', include('apps.linkedin.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

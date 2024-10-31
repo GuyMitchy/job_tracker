@@ -64,6 +64,16 @@ class GoalProgressCreateView(LoginRequiredMixin, CreateView):
         self.goal = get_object_or_404(Goal, pk=kwargs['goal_pk'], user=request.user)
         return super().dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['goal'] = self.goal  # Pass the goal to the form
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['goal'] = self.goal
+        return context
+
     def form_valid(self, form):
         form.instance.goal = self.goal
         return super().form_valid(form)

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Engagement Plans</h1>
+        <a href="{% url 'linkedin:plan-create' %}" class="btn btn-primary">Create New Plan</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if plans %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Frequency</th>
+                                <th>Targets</th>
+                                <th>Timeline</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for plan in plans %}
+                            <tr>
+                                <td>{{ plan.title }}</td>
+                                <td>{{ plan.get_frequency_display }}</td>
+                                <td>
+                                    <small>
+                                        Posts: {{ plan.target_posts }}<br>
+                                        Connections: {{ plan.target_connections }}<br>
+                                        Interactions: {{ plan.target_interactions }}
+                                    </small>
+                                </td>
+                                <td>{{ plan.start_date|date:"M j" }} - {{ plan.end_date|date:"M j, Y" }}</td>
+                                <td>
+                                    <!-- Add progress tracking here -->
+                                    <span class="badge bg-info">In Progress</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">No engagement plans created yet.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -34,6 +34,7 @@ class NetworkingEventForm(forms.ModelForm):
             # Update the existing event
             event = instance.event
             event.title = f"{instance.get_event_type_display()} with {instance.contact.name}"
+            event.event_type = 'networking'
             event.start_time = self.cleaned_data['start_time']
             event.end_time = self.cleaned_data['end_time']
             event.description = instance.notes

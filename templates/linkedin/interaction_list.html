@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>LinkedIn Interactions</h1>
+        <a href="{% url 'linkedin:interaction-create' %}" class="btn btn-primary">Add New Interaction</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if interactions %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Contact</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Follow-up</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for interaction in interactions %}
+                            <tr>
+                                <td>{{ interaction.contact_name }}</td>
+                                <td>{{ interaction.get_interaction_type_display }}</td>
+                                <td>{{ interaction.interaction_date|date:"M j, Y" }}</td>
+                                <td>
+                                    {% if interaction.follow_up_date %}
+                                        {{ interaction.follow_up_date|date:"M j, Y" }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ interaction.contact_url }}" target="_blank" class="btn btn-sm btn-info">View Profile</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">No interactions recorded yet.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

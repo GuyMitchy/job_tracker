@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>LinkedIn Posts</h1>
+        <a href="{% url 'linkedin:post-create' %}" class="btn btn-primary">Add New Post</a>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% if posts %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Content</th>
+                                <th>Posted</th>
+                                <th>Engagement</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary">{{ post.get_post_type_display }}</span>
+                                </td>
+                                <td>{{ post.content|truncatechars:100 }}</td>
+                                <td>{{ post.posted_at|date:"M j, Y" }}</td>
+                                <td>
+                                    <small>
+                                        <i class='bx bx-like'></i> {{ post.likes }}
+                                        <i class='bx bx-comment ms-2'></i> {{ post.comments }}
+                                        <i class='bx bx-share ms-2'></i> {{ post.shares }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <a href="{% url 'linkedin:post-detail' post.pk %}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{% url 'linkedin:post-edit' post.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No LinkedIn posts tracked yet. <a href="{% url 'linkedin:post-create' %}">Add your first post</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

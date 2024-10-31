@@ -31,10 +31,14 @@ class GoalProgressForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={'rows': 2}),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.goal = kwargs.pop('goal', None)
+        super().__init__(*args, **kwargs)
+
     def clean(self):
         cleaned_data = super().clean()
         date = cleaned_data.get('date')
-        goal = self.instance.goal if self.instance else None
+        goal = self.goal
 
         if goal and date:
             if date < goal.start_date or date > goal.end_date:
